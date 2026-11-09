@@ -1,0 +1,24 @@
+# --- Secrets: never commit real credentials ---
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+
+# --- Local / generated ---
+*.log
+scripts/__pycache__/
+.venv/
+venv/
+
+# --- OS noise ---
+.DS_Store
+Thumbs.db
+
+# --- Large print artifacts (keep the repo about docs/data, not binaries) ---
+gcode/*.gcode
+!gcode/start_*.gcode
+*.stl
+*.obj
+*.3mf
