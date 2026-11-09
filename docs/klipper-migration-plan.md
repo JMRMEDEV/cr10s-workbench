@@ -118,3 +118,10 @@ BLTouch wiring (confirmed by photos/Gemini read + functional tests):
    (paper test) → `SAVE_CONFIG`. Then `BED_MESH_CALIBRATE`, `PID_CALIBRATE`.
 
 Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin tip).
+
+### 2026-11-09 — control pin confirmed from source
+- Board silkscreen: **Creality V2.2** (same ATmega2560 family as the official CR-10S config).
+- Marlin `pins_RAMPS_CREALITY.h` (Creality 2560 boards): `BEEPER_PIN 37`; Klipper arduino-mega
+  alias `ar37 = PC0` → **BLTouch `control_pin: PC0`** (pin-27 adapter = LCD beeper line).
+- Z-min: RAMPS `Z_MIN_PIN 18` = `ar18 = PD3` → `sensor_pin: ^PD3` (consistent).
+- Original Z switch confirmed unplugged (photo); BLTouch pair occupies Z-min. Correct.
