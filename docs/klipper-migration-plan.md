@@ -125,3 +125,15 @@ Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin
   alias `ar37 = PC0` → **BLTouch `control_pin: PC0`** (pin-27 adapter = LCD beeper line).
 - Z-min: RAMPS `Z_MIN_PIN 18` = `ar18 = PD3` → `sensor_pin: ^PD3` (consistent).
 - Original Z switch confirmed unplugged (photo); BLTouch pair occupies Z-min. Correct.
+
+### 2026-11-09 — Klipper flashed + BLTouch control pin found by reverse engineering
+- Klipper flashed over USB (`avrdude -c wiring`, 44,682 bytes written + verified). MCU connects
+  cleanly; thermistors read room temp; OctoPrint drives Klipper via `/tmp/printer` @ 250000.
+  Systemd unit written manually (`/etc/systemd/system/klipper.service`).
+- First try `control_pin: PC0` → probe did nothing, **printer beeped**: PC0 is the LCD buzzer.
+  (Every "pin 27 = PA4 / beeper" guide is for Melzi or doesn't apply to this board.)
+- **Found the real pin by disassembling the stock Marlin backup** (`avr-objdump -m avr6`):
+  - Located Arduino `digital_pin_to_port_PGM` table at flash 0x3102 → `pinMode` at 0xcec4.
+  - `Servo::attach` at 0x20110 (stores 6-bit `Pin.nbr`, then `pinMode(pin, OUTPUT)`).
+  - Init call at 0x223e2: `attach(servo0, pin=0x0B)` → **SERVO0_PIN = D11 = PB5**.
+- With `control_pin: PB5`: pin_up→open, **touch_mode→TRIGGERED**, pin_up→open. BLTouch verified.
