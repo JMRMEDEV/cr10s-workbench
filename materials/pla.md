@@ -77,3 +77,39 @@ retuned for 210/60 °C with no soak.
 - First layer adhesion at 60°C + glue (PLA usually sticks well).
 - Stringing on the Benchy's chimney/cabin → tune retraction / lower temp to 200.
 - If first layer too squished/loose, adjust the ZShift `z_offset` (not the slicer).
+
+---
+
+## v2 — Post quarter-Benchy refinements (small parts)
+
+First test (quarter Benchy, this profile) printed **structurally successfully** — no layer
+shift, recognizable geometry, good adhesion — validating the BLTouch/mesh/ZShift stack.
+Fine-detail quality was limited by **cooling on tiny layers + 0.4mm nozzle resolution at
+25% scale** (not a calibration fault). Refinements applied in
+[`../slicer/pla_cr10s_small.ini`](../slicer/pla_cr10s_small.ini):
+
+| Change | From | To | Reason |
+|--------|------|----|--------|
+| Min layer time | — | **15 s** (`slowdown_below_layer_time`) | #1 fix: tiny layers must cool before the next starts |
+| Min print speed floor | — | 10 mm/s | so slowdown doesn't stall to zero |
+| Nozzle temp | 210/205 | **205/200** | reduce heat buildup / sagging |
+| Bed temp | 60 | 55 | sufficient for PLA + glue |
+| Layer height | 0.2 | **0.12** | finer vertical detail (not 0.10 — too-short layers worsen heat soak) |
+| Perimeters | 3 | **2** | small part; faster, less heat dwell |
+| External perimeter speed | (45) | **20 mm/s** | crisper outer walls |
+| Small perimeter speed | — | **12 mm/s** | chimney/railings definition |
+| Bridge speed | 30 | 18 | window spans |
+| Fan full after | layer 1 | **layer 2** | layer-1 adhesion, then cool hard |
+
+Result: ~11 min print (up from ~5) — the extra time IS the cooling fix (min-layer-time).
+
+### Hardware limits (can't fix in slicer)
+- At 25% scale Benchy ≈ 15×7.75×12 mm. The chimney bore is ~0.75 mm — <2× a 0.4 mm
+  nozzle, so some tiny features are physically unresolvable. A **0.25 mm nozzle** would
+  help most for small models (bigger impact than layer height alone).
+- For very small parts, printing **2+ copies spaced ~25-30 mm apart** also improves
+  cooling (nozzle leaves each part to cool) — optional, needs bed_shape centering care.
+
+### Flow
+- Left at default. Blobs seen may be mild over-extrusion but unproven; fix cooling first,
+  then run a flow calibration only if the hull is still rough.
