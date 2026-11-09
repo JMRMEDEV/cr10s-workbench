@@ -79,3 +79,23 @@ stock Creality Marlin:
 - Klipper service NOT started yet (no printer.cfg / MCU flashed).
 
 ### Next (needs hands-on): ISP wiring + backup + flash
+
+### 2026-11-09 — MCU IDENTIFICATION CORRECTION (important)
+- **Physical chip reading is authoritative: `ATMEGA2560-16AU` on a Creality V2.0 board.**
+- Earlier I wrongly inferred ATmega1284P/Melzi from the FTDI USB chip — the USB-serial
+  chip is INDEPENDENT of the MCU. GPT's original "ATmega2560" was correct. Lesson: identify
+  the MCU by the chip marking, not the USB bridge.
+- Rebuilt Klipper for **atmega2560 @ 16MHz, 250000 baud** (44.6 KB of 256 KB flash).
+  Saved: `klipper/firmware/klipper_atmega2560_16mhz.hex`. Removed the wrong 1284p hex.
+- **Consequence (good): Creality V2.x/2560 boards ship with an Arduino MEGA2560 bootloader
+  → flash Klipper OVER USB (avrdude `-c wiring`). The Arduino Uno / ISP is NOT needed.**
+  Simpler and lower-risk. Printer can be closed back up.
+
+### Flashing plan (USB, no ISP)
+1. Close printer, power on normally, USB → Pi (`/dev/ttyUSB0`).
+2. Stop OctoPrint (frees the port).
+3. BACKUP: `avrdude -c wiring -p m2560 -P /dev/ttyUSB0 -b 115200 -D -U flash:r:marlin_backup.hex:i`
+4. FLASH:  `avrdude -c wiring -p m2560 -P /dev/ttyUSB0 -b 115200 -D -U flash:w:klipper.elf.hex:i`
+   (Klipper's own `make flash FLASH_DEVICE=/dev/ttyUSB0` wraps this.)
+5. printer.cfg (2560 pins = the "Creality CR-10S / melzi? NO — ramps-like 2560" generic
+   mega2560 pinmap; use Klipper's `generic-cr10s` / board-specific sample as starting point).
