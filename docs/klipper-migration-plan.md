@@ -99,3 +99,22 @@ stock Creality Marlin:
    (Klipper's own `make flash FLASH_DEVICE=/dev/ttyUSB0` wraps this.)
 5. printer.cfg (2560 pins = the "Creality CR-10S / melzi? NO — ramps-like 2560" generic
    mega2560 pinmap; use Klipper's `generic-cr10s` / board-specific sample as starting point).
+
+### 2026-11-09 — printer.cfg draft (research done, not deployed)
+Draft: [`../klipper/printer.cfg`](../klipper/printer.cfg). Base = Klipper official
+`printer-creality-cr10s-2017.cfg` (ATmega2560 pin map) + this printer's measured M92/PID.
+
+BLTouch wiring (confirmed by photos/Gemini read + functional tests):
+- 5-wire harness → White/Black pair on **Z-min** port → `sensor_pin: ^PD3` (official 2560 Z endstop pin).
+- Blue/Red/Yellow → **pin-27 adapter** under the LCD ribbon (taps the LCD beeper line) → `control_pin`.
+  - "pin 27 = PA4" in most guides is for **Melzi/1284p** (Ender 3, CR-10). NOT this board.
+  - On this 2560 board the LCD beeper is D37 = **PC0** (best candidate, UNVERIFIED).
+
+**Post-flash BLTouch check (NO axis motion, before any G28):**
+1. `BLTOUCH_DEBUG COMMAND=pin_down` → pin must drop. `BLTOUCH_DEBUG COMMAND=pin_up` → pin retracts.
+   If nothing moves: wrong control_pin → try next candidate, `RESTART`, repeat.
+2. `QUERY_PROBE` → "open" with pin up. Push pin up gently during `pin_down` + `QUERY_PROBE` → "TRIGGERED".
+3. Only then: measure x/y offsets, set `safe_z_home`/`bed_mesh` limits, `G28`, `PROBE_CALIBRATE`
+   (paper test) → `SAVE_CONFIG`. Then `BED_MESH_CALIBRATE`, `PID_CALIBRATE`.
+
+Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin tip).
