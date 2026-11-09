@@ -152,3 +152,27 @@ For large flat covers with bosses (e.g. bottom-cover-internal, 177×252×10mm). 
 - First boss/placement test part: ~6.5h, ~98g.
 
 **Warp watch:** glue the FULL footprint (~175×250mm), not just center; no draft; PLA = no enclosure.
+
+---
+
+## 8-bit board command-density limit (IMPORTANT — large/detailed parts)
+
+The CR-10S Melzi (ATmega1284P, 8-bit) processes only **~120 G-code commands/min** on
+dense geometry. The bottom-cover first slice had **114,599 G1 commands** → the board
+stalled (flooded `echo:busy: processing`), effective print time **16+ hours** (OctoPrint
+showed "4 days"). Sliced estimate (6.5h) assumed feedrates the board can't sustain.
+
+**Culprit breakdown (command count by type):** Gap fill = 32,370 (#1!), external
+perimeters 19,466, solid infill 15,015. Gap fill on fine triangulation is the worst.
+
+**Fix — board-friendly profile** [`../slicer/pla_cr10s_lowcmd.ini`](../slicer/pla_cr10s_lowcmd.ini):
+| Change | Effect |
+|--------|--------|
+| `gap_fill_enabled = 0` | removes ~32K tiny segments (biggest win) |
+| `extrusion_width = 0.6` | wider lines fill gaps without gap-fill, fewer passes |
+| `gcode_resolution = 0.12` | merges tiny collinear segments |
+| `perimeters = 2`, `fill_density = 12%`, rectilinear | fewer direction changes |
+
+Result: **114,599 → 34,972 commands (−70%)**, ~5h, bosses verified intact (toolpath
+render showed all ~20 boss rings crisp and correctly placed). Rule of thumb for this
+board: keep large prints **under ~40K commands**.
