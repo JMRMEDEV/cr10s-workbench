@@ -137,3 +137,15 @@ Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin
   - `Servo::attach` at 0x20110 (stores 6-bit `Pin.nbr`, then `pinMode(pin, OUTPUT)`).
   - Init call at 0x223e2: `attach(servo0, pin=0x0B)` → **SERVO0_PIN = D11 = PB5**.
 - With `control_pin: PB5`: pin_up→open, **touch_mode→TRIGGERED**, pin_up→open. BLTouch verified.
+
+### 2026-11-09 — X/Y homing working
+- Probe offsets measured: `x_offset -42` (probe left of nozzle), `y_offset -6` (probe toward front);
+  retracted pin 3mm above nozzle, deployed pin 4.4mm below nozzle (safe).
+- `safe_z_home` at nozzle (192,156) → probe at bed center; mesh 15..250 × 20..280 (probe coords).
+- First `G28 X Y` failed: bed drove away from the Y switch. Detour: I wrongly inverted Y
+  (`!PF7`), then verified physically: Y endstop is at the BACK, switch reads TRIGGERED on press,
+  bed reaches it after ~240mm of travel. **Official `dir_pin: PF7` is correct** → reverted.
+  `G28 Y`, `G28 X` → `X:0 Y:0`, no errors.
+- Webcam (XIFT 4K) raised from 640x480 to 3840x2160 @5fps (`/boot/firmware/octopi.txt`);
+  `scripts/snap.sh label width [crop]` grabs + downsamples/crops snapshots for visual checks.
+- Added `[force_move]` for bring-up diagnostics.
