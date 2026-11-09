@@ -149,3 +149,11 @@ Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin
 - Webcam (XIFT 4K) raised from 640x480 to 3840x2160 @5fps (`/boot/firmware/octopi.txt`);
   `scripts/snap.sh label width [crop]` grabs + downsamples/crops snapshots for visual checks.
 - Added `[force_move]` for bring-up diagnostics.
+
+### 2026-11-09 — Z offset calibrated (the original problem, solved)
+- First `G28 Z` OK (probe at bed center, slow descent, no collision; camera-checked).
+- `PROBE_CALIBRATE` at (150,150): probe samples agree within 0.0075mm. Paper test via TESTZ.
+  Needed `position_min: -6` (probe triggers ~3.2mm above nozzle contact).
+- **`z_offset = 3.236`** saved via `SAVE_CONFIG` (auto-generated block at end of printer.cfg).
+- Verified: re-home → `G1 X150 Y150 Z0` → paper drag identical. **Z0 is correct in firmware;
+  no ZShift middleware, no slicer offset.**
