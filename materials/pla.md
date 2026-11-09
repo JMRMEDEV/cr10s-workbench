@@ -113,3 +113,24 @@ Result: ~11 min print (up from ~5) — the extra time IS the cooling fix (min-la
 ### Flow
 - Left at default. Blobs seen may be mild over-extrusion but unproven; fix cooling first,
   then run a flow calibration only if the hull is still rough.
+
+---
+
+## v3 — Cooling experiment (two parts) + PID fix
+
+Prereq done: **hotend PID retuned** (swing 16.6°C→3.2°C, see `../calibration/pid-tuning-log.md`)
+— removes temp oscillation as a confound before testing cooling.
+
+Config: [`../slicer/pla_cr10s_small_v3.ini`](../slicer/pla_cr10s_small_v3.ini) (= v2 with
+`min_print_speed = 5`, so the 15s min-layer-time can slow further).
+
+**Finding that drove the two-part approach:** only ~5 layers (the chimney, Z≈10.5–11mm)
+are "tiny" (<20 extrusion moves). Slicer slowdown alone can't give them 15s without the
+nozzle stalling *on top of the chimney* (heat-soak). Printing **two Benchies 30mm apart,
+layer-by-layer** lets the nozzle leave each part to cool — the right fix for those layers.
+
+Slice: `--duplicate 2 --duplicate-distance 30` (simultaneous, not sequential).
+Result: ~21m, centered on (150,150), two copies stacked along Y. No M109. ZShift active.
+
+Success criterion (per GPT): cleaner chimney, less cabin-window distortion, less bow curl.
+If v3 ≈ v2, cooling is no longer the limiter → move to flow calibration / geometry.
