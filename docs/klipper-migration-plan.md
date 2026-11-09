@@ -163,3 +163,9 @@ Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin
 - Range **0.59 mm** (min −0.219, max +0.371), avg 0.02 — consistent with last night's
   manual-level result (~0.5 mm). Saved as profile `default` via SAVE_CONFIG.
 - Re-run with the bed at print temp (55–60°C PLA) for best accuracy before critical prints.
+
+### 2026-11-09 — PID tuned under Klipper; OctoPrint error handling
+- Hotend 13.824/0.912/52.358 (swing 1.7 °C), bed 57.273/3.320/246.990 (swing 0.8 °C). See pid-tuning-log.md.
+- OctoPrint `serial.disconnectOnErrors: false`: a rejected command ("Must home axis first") made
+  OctoPrint send M112 and drop Klipper. Klipper handles safety shutdowns itself.
+- Rule: SAVE_CONFIG/RESTART clears homing → always `G28` before moving.
