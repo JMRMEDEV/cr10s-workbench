@@ -134,3 +134,21 @@ Result: ~21m, centered on (150,150), two copies stacked along Y. No M109. ZShift
 
 Success criterion (per GPT): cleaner chimney, less cabin-window distortion, less bow curl.
 If v3 ≈ v2, cooling is no longer the limiter → move to flow calibration / geometry.
+
+---
+
+## Functional / large flat parts — profile
+
+Config: [`../slicer/pla_cr10s_functional.ini`](../slicer/pla_cr10s_functional.ini).
+For large flat covers with bosses (e.g. bottom-cover-internal, 177×252×10mm). Priorities:
+**XY accuracy** (boss placement) and **no warp** — NOT the small-part cooling crawl.
+
+- Normal speeds (big layers cool fine): outer 30, perimeter 45, infill 70 mm/s.
+- 3 perimeters, 20% grid infill (not fragile, not heavy).
+- **6mm brim** + 55°C bed for anti-warp on the large footprint.
+- 200/205°C (post-PID-tune stable temp → consistent boss dimensions).
+- Auto-placed/centered on 300×300 bed; Z auto-dropped to plate (model Z-min was −2.2).
+- ZShift (+0.90) handles first-layer datum as usual; no M109.
+- First boss/placement test part: ~6.5h, ~98g.
+
+**Warp watch:** glue the FULL footprint (~175×250mm), not just center; no draft; PLA = no enclosure.
