@@ -1,0 +1,15 @@
+<form class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label">{{ _('Enabled') }}</label>
+        <div class="controls">
+            <input type="checkbox" data-bind="checked: settings.plugins.zshift.enabled">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">{{ _('Z offset (mm)') }}</label>
+        <div class="controls">
+            <input type="number" step="0.01" data-bind="value: settings.plugins.zshift.z_offset">
+            <span class="help-block">{{ _('Added to Z of every absolute G0/G1 move. Measured value for this printer: 1.15') }}</span>
+        </div>
+    </div>
+</form>
