@@ -169,3 +169,14 @@ Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin
 - OctoPrint `serial.disconnectOnErrors: false`: a rejected command ("Must home axis first") made
   OctoPrint send M112 and drop Klipper. Klipper handles safety shutdowns itself.
 - Rule: SAVE_CONFIG/RESTART clears homing → always `G28` before moving.
+
+### 2026-11-09 — Z offset recalibrated hot: 3.236 → 3.641
+- First half-Benchy: plastic never touched the glass (extruder verified OK separately) →
+  first layer was printing ~0.4 mm too high. Cold paper test (3.236) was off.
+- Recalibrated at temperature (bed 55 °C, nozzle 150 °C — no ooze): `PROBE_ACCURACY` 10 samples,
+  range 0.0125 mm, σ 0.0037 → probe is fine. Paper spot −0.399 on the old scale →
+  **`z_offset = 3.641`** (SAVE_CONFIG).
+- Mistake to avoid: after a z_offset is saved, PROBE_CALIBRATE's Z scale includes it (start ≈ 5 +
+  offset). I reused an absolute TESTZ target from the previous scale and drove the nozzle ~3 mm
+  below the believed bed height. No damage found; re-homed (probe trigger consistent → no lost steps).
+  Rule now: always read the start Z and never TESTZ below +0.5 without the user watching.
