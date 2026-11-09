@@ -157,3 +157,9 @@ Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin
 - **`z_offset = 3.236`** saved via `SAVE_CONFIG` (auto-generated block at end of printer.cfg).
 - Verified: re-home → `G1 X150 Y150 Z0` → paper drag identical. **Z0 is correct in firmware;
   no ZShift middleware, no slicer offset.**
+
+### 2026-11-09 — Bed mesh saved
+- `BED_MESH_CALIBRATE` 5×5 over probe area 15..250 × 20..280 (cold bed), ~2.5 min.
+- Range **0.59 mm** (min −0.219, max +0.371), avg 0.02 — consistent with last night's
+  manual-level result (~0.5 mm). Saved as profile `default` via SAVE_CONFIG.
+- Re-run with the bed at print temp (55–60°C PLA) for best accuracy before critical prints.
