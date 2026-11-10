@@ -180,3 +180,10 @@ Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin
   offset). I reused an absolute TESTZ target from the previous scale and drove the nozzle ~3 mm
   below the believed bed height. No damage found; re-homed (probe trigger consistent → no lost steps).
   Rule now: always read the start Z and never TESTZ below +0.5 without the user watching.
+
+### 2026-11-09 — First layer dialed in: z_offset 3.441 ✅
+- 3.236 (cold paper) → plastic never touched; 3.641 (hot paper, "pressure") → nozzle plowed layers.
+- Middle ground via `SET_GCODE_OFFSET Z=0.2` + `Z_OFFSET_APPLY_PROBE` + `SAVE_CONFIG` → **3.441**.
+- Validated with a 50×50×0.24 mm single-layer test (`stl/first_layer_50mm.stl`, Klipper PLA profile):
+  user: "best PLA layer ever with this printer". No live adjustment needed.
+- Lesson: paper feel is ±0.2 mm here; use a printed first-layer test + live SET_GCODE_OFFSET to finalize.
