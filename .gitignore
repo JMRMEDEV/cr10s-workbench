@@ -22,3 +22,7 @@ gcode/*.gcode
 *.stl
 *.obj
 *.3mf
+
+# generated
+gcode/out/
+render/

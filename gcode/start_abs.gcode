@@ -1,3 +1,5 @@
+; LEGACY (stock Creality Marlin era). Uses Marlin-only M420 / avoids M109 because of the old PID.
+; For Klipper use gcode/start_pla_klipper.gcode as the template.
 ; CR-10S ABS start sequence — tested, Benchy 9/10
 ; KEY RULE: no M109. Current PID tune oscillates ±10C and makes M109 stall for hours.
 ; Use M104 (non-blocking) + G4 dwell instead.

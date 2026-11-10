@@ -1,3 +1,7 @@
+> **Update 2026-11-09:** ZShift is retired (Klipper handles Z). Safe mode no longer changes the
+> first-layer height; it only disables third-party OctoPrint plugins. The triggers/recovery below
+> still apply.
+
 # OctoPrint Safe Mode — Triggers, Diagnosis & Recovery
 
 Reference for why OctoPrint boots into **safe mode** (all third-party plugins —

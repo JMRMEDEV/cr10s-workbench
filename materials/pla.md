@@ -1,3 +1,7 @@
+> **CURRENT (Klipper): read [`../docs/pla-howto.md`](../docs/pla-howto.md)** — profile
+> `slicer/pla_cr10s_klipper.ini`. Everything below is the Marlin-era history (ZShift offset,
+> low-command workaround, small-part cooling tests) kept for reference.
+
 # PLA — CR-10S Profile (derived from ABS intel)
 
 **Status:** UNTESTED — derived from the tested ABS profile (`abs.md`) + PLA best practice.

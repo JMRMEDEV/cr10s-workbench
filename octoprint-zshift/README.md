@@ -1,3 +1,7 @@
+> **RETIRED (2026-11-09).** Uninstalled from OctoPrint. The printer now runs Klipper, which
+> applies the BLTouch `z_offset` correctly, so this host-side Z rewrite is no longer needed
+> (and would now double-offset every move). Kept only as history of the Marlin workaround.
+
 # OctoPrint-ZShift
 
 A tiny OctoPrint **middleware** plugin that adds a fixed offset to the `Z` value of

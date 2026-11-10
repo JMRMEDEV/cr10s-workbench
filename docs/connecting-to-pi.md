@@ -67,14 +67,15 @@ curl -s "${OCTOPRINT_URL}:5000/api/connection" -H "X-Api-Key: ${OCTOPRINT_API_KE
 # version
 curl -s "${OCTOPRINT_URL}:5000/api/version" -H "X-Api-Key: ${OCTOPRINT_API_KEY}"
 
-# connect to the printer over serial
+# connect OctoPrint to Klipper's virtual serial port (/tmp/printer @ 250000)
 curl -s -X POST "${OCTOPRINT_URL}:5000/api/connection" \
   -H "X-Api-Key: ${OCTOPRINT_API_KEY}" -H "Content-Type: application/json" \
   -d "{\"command\":\"connect\",\"port\":\"${PRINTER_SERIAL_PORT}\",\"baudrate\":${PRINTER_BAUDRATE}}"
 ```
 
-> The global API key may be **read-only** for some actions; printer connect/control can
-> return a permission error. Use a user/app API key with write access if needed.
+> With Klipper, OctoPrint never talks to the USB board directly: Klipper owns
+> `/dev/ttyUSB0` and exposes `/tmp/printer`. `scripts/octo.sh` runs these calls via SSH on
+> the Pi (`localhost:5000`), so they work even when port 5000 isn't reachable from your machine.
 
 ---
 
@@ -107,13 +108,48 @@ Reference: <https://community.octoprint.org/t/i-forgot-my-octoprint-password-how
 
 ---
 
-## 5. Current working values
+## 5. Klipper on the Pi
 
-See `.env` (gitignored). As of 2026-11-08:
+| Item | Location / command |
+|------|-------------------|
+| Service | `sudo systemctl {status,restart} klipper` (unit: `/etc/systemd/system/klipper.service`, written by hand — Klipper's `install-debian.sh` fails on Bookworm) |
+| Config | `~/printer_data/config/printer.cfg` (repo copy: `klipper/printer.cfg`) |
+| Log | `~/printer_data/logs/klippy.log` |
+| Host env | `~/klippy-env` (venv), source `~/klipper` |
+| MCU link | `/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A10719QE-if00-port0` @ 250000 |
+| OctoPrint port | `/tmp/printer` @ 250000 (`serial.additionalPorts`) |
+
+Useful G-code (send with `./scripts/octo.sh gcode "..."`):
+`STATUS`, `RESTART` (reload config), `FIRMWARE_RESTART` (clear a shutdown), `G28`,
+`QUERY_ENDSTOPS`, `QUERY_PROBE`, `BLTOUCH_DEBUG COMMAND=pin_down|pin_up`,
+`FORCE_MOVE STEPPER=stepper_z DISTANCE=… VELOCITY=…` (move without homing),
+`SET_GCODE_OFFSET Z_ADJUST=±0.025 MOVE=1`, `SAVE_CONFIG`.
+
+**OctoPrint setting:** `serial.disconnectOnErrors = false`. Otherwise any `!!` from Klipper
+(e.g. "Must home axis first") makes OctoPrint send `M112` and drop the connection.
+
+**After `SAVE_CONFIG`, `RESTART`, or a cancel, the printer is unhomed** — home before `G1` moves.
+
+Reflash / update the MCU: see `docs/klipper-migration-plan.md` (avrdude `-c wiring -p m2560`).
+Restore stock Marlin: `klipper/marlin_backup/README.md`.
+
+## 6. Webcam
+
+XIFT 4K USB camera, served by OctoPi `webcamd` (mjpg-streamer). Resolution set in
+`/boot/firmware/octopi.txt`:
+`camera_usb_options="-r 3840x2160 -f 5 -vf true -hf true"` (was 640x480).
+Snapshot: `http://127.0.0.1:8080/?action=snapshot` on the Pi, or `./scripts/snap.sh label width [x0,y0,x1,y1]`
+(downsamples / crops full-res frames into `/tmp/cam_<label>.jpg`).
+Camera is at the front; it judges X and Z motion well but not Y depth — use `QUERY_ENDSTOPS` for Y.
+
+## 7. Current working values
+
+See `.env` (gitignored). As of 2026-11-09:
 
 | What | Value |
 |------|-------|
 | SSH | `pi` / `raspberry` @ `192.168.100.33` (host `octopi`) |
 | Web UI | `admin` / `admin` — **change this** |
 | API key | in `.env` as `OCTOPRINT_API_KEY` |
+| Printer port | `PRINTER_SERIAL_PORT=/tmp/printer`, `PRINTER_BAUDRATE=250000` |
 | Pi MAC | `B8:27:EB:2E:27:49` (use to re-find IP after a network change) |

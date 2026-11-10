@@ -1,3 +1,5 @@
+; LEGACY (stock Creality Marlin era). Uses Marlin-only M420 / avoids M109 because of the old PID.
+; For Klipper use gcode/start_pla_klipper.gcode as the template.
 ; CR-10S PLA start sequence (derived from ABS start, no M109)
 ; KEY RULE: no M109/M190-blocking-with-oscillation. Current PID oscillates; use M104/M140 + G4.
 ; PLA: 210C nozzle / 60C bed, no long soak, no enclosure.

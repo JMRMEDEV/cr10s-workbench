@@ -97,3 +97,14 @@ offset needed.
   loosen = bed up (fix low corner).
 - EMERGENCY_PARSER:0 in this firmware — M112 not parsed instantly mid-move.
 - All motion performed remotely via OctoPrint/SSH with operator present at the printer.
+
+---
+
+## 2026-11-09 — Klipper (replaces the Marlin datum work above)
+- BLTouch under Klipper: `PROBE_ACCURACY` (hot, 10 samples) range 0.0125 mm, σ 0.0037 mm.
+- `z_offset`: 3.236 (cold paper, too high) → 3.641 (hot paper, too low) → **3.441** (midpoint,
+  validated by a printed 50×50 single layer).
+- Bed mesh 5×5 (probe area 15..250 × 20..280), cold: range **0.59 mm** (−0.219 … +0.371),
+  consistent with the manual-level result above. Saved as `default`; auto-loaded and also
+  loaded in the start G-code.
+- The Marlin offsets/ZShift values above are historical; they do not apply under Klipper.

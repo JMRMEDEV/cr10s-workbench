@@ -187,3 +187,19 @@ Still to measure on the machine: probe x_offset / y_offset (ruler, nozzle vs pin
 - Validated with a 50×50×0.24 mm single-layer test (`stl/first_layer_50mm.stl`, Klipper PLA profile):
   user: "best PLA layer ever with this printer". No live adjustment needed.
 - Lesson: paper feel is ±0.2 mm here; use a printed first-layer test + live SET_GCODE_OFFSET to finalize.
+
+---
+
+## FINAL STATUS — 2026-11-09 ✅ Migration complete
+- Klipper on ATmega2560 (Creality V2.2), host Pi 3, OctoPrint via `/tmp/printer`.
+- BLTouch PB5/^PD3, offsets −42/−6, **z_offset 3.441**, 5×5 mesh, PID hotend 13.824/0.912/52.358,
+  bed 57.273/3.320/246.990. Y dir PF7 (official), X/Y endstops verified.
+- First good print: half-scale 3DBenchy, PLA, near-perfect (slight elephant foot).
+- Adhesion fixes that made it work: bed 65 °C first layer / 60 °C after, 5 mm brim, part fan
+  delayed to layer 4–5, `SET_GCODE_OFFSET Z=-0.025`. Full procedure: `docs/pla-howto.md`.
+- Performance: MCU ≤13 % busy, Pi Klipper CPU 4.7 %, 0 retransmits, ≈1,530 G-code lines/min
+  streamed (vs ~120/min Marlin ceiling). Details: `docs/klipper-assessment.md`.
+- Retired: OctoPrint-ZShift plugin, low-command slicer profile, Marlin start G-code (kept as legacy).
+- Open items: re-probe mesh hot; elephant-foot compensation for dimensional parts; Klipper start
+  G-code + re-test for ABS; OctoPrint cancel sends harmless Marlin `M108`; optional input shaping /
+  pressure advance.
