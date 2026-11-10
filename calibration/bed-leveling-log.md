@@ -108,3 +108,18 @@ offset needed.
   consistent with the manual-level result above. Saved as `default`; auto-loaded and also
   loaded in the start G-code.
 - The Marlin offsets/ZShift values above are historical; they do not apply under Klipper.
+
+## 2026-11-09 22:58 — Bed mesh re-probed HOT (bed 60 °C, 5 min soak, nozzle 150 °C)
+Rows = probe Y 20 (front) → 280 (back); columns = probe X 15 (left) → 250 (right).
+```
+COLD (16:47)                                   HOT (22:58)
+-0.180 -0.075  0.075  0.218  0.371             -0.224 -0.075  0.123  0.329  0.551
+-0.200 -0.071  0.060  0.184  0.280             -0.213 -0.068  0.073  0.224  0.344
+-0.096 -0.049  0.003  0.071  0.168             -0.136 -0.074 -0.016  0.091  0.243
+ 0.020  0.041  0.020  0.008 -0.015             -0.018  0.009  0.016  0.039  0.045
+ 0.024 -0.046 -0.115 -0.180 -0.219             -0.023 -0.068 -0.123 -0.165 -0.164
+range 0.59 mm                                   range 0.775 mm
+```
+Biggest change: **front-right rises ~0.18 mm** when hot (0.371 → 0.551); right column +0.05–0.18 mm,
+center unchanged. That is most of a 0.24 mm first layer, so large parts must use the hot mesh.
+Saved as `default` (replaces the cold mesh). Re-probe hot if the bed/glass is reseated.
